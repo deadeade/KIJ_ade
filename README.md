@@ -1,4 +1,56 @@
-Fungsi Enkripsi (vigenere_encrypt): Fungsi ini mengamankan teks plainteks menggunakan metode Vigenere Cipher. Dalam proses enkripsi, sebuah aliran kunci dibentuk bersama fungsi generate_key_stream. Setiap karakter dalam teks plainteks dioperasikan dengan karakter yang sesuai dari aliran kunci menggunakan operasi XOR. Hasilnya adalah teks terenkripsi atau chiperteks, yang dikembalikan oleh fungsi ini.
-Fungsi Dekripsi (vigenere_decrypt): Fungsi ini bertugas mengembalikan teks asli dari teks chiperteks yang telah dienkripsi sebelumnya. Seiring dengan proses enkripsi, aliran kunci dihasilkan menggunakan fungsi generate_key_stream. Setiap karakter dalam chiperteks dioperasikan dengan karakter yang sesuai dari aliran kunci melalui operasi XOR, menghasilkan teks plainteks yang otentik, yang dikembalikan oleh fungsi ini.
-Fungsi Generate Key Stream (generate_key_stream): Fungsi ini membuat aliran kunci dengan mengulang huruf kunci hingga panjangnya menyamai teks. Aliran kunci yang dihasilkan dikembalikan oleh fungsi ini.
-Opsi Pengguna dan Interaksi Program: Program memberikan opsi kepada pengguna untuk melakukan enkripsi, dekripsi, atau keluar dari aplikasi. Pengguna diminta untuk memberikan pilihan dengan menginput "enkripsi", "dekripsi", atau "exit". Apabila pengguna memilih enkripsi, mereka diminta untuk memasukkan teks plainteks dan kunci. Program kemudian menghasilkan chiperteks dan menawarkan opsi untuk melanjutkan ke dekripsi atau keluar. Jika pengguna memilih dekripsi, mereka diminta untuk menyampaikan chiperteks dan kunci, dan program menghasilkan teks plainteks. Apabila pengguna memilih keluar, program berhenti. Program ini beroperasi dalam lingkaran hingga pengguna memilih untuk keluar, memberikan kenyamanan untuk melakukan operasi berulang tanpa harus memulai ulang program.
+def vigenere_encrypt(plaintext, key):
+    key = key * (len(plaintext) // len(key)) + key[:len(plaintext) % len(key)]
+    ciphertext = ""
+
+    for i in range(len(plaintext)):
+        char_plaintext = plaintext[i]
+        char_key = key[i]
+        
+        encrypted_char = str((ord(char_plaintext) + ord(char_key)) % 256)
+        ciphertext += encrypted_char + " "
+
+    return ciphertext.strip()
+
+def vigenere_decrypt(ciphertext, key):
+    key = key * (len(ciphertext) // len(key)) + key[:len(ciphertext) % len(key)]
+    decrypted_text = ""
+    
+    cipher_chars = ciphertext.split()
+
+    for i in range(len(cipher_chars)):
+        cipher_char = int(cipher_chars[i])
+        char_key = key[i]
+        
+        decrypted_char = chr((cipher_char - ord(char_key)) % 256)
+        decrypted_text += decrypted_char
+
+    return decrypted_text
+
+while True:
+    choice = input("Pilih mode (enkripsi/dekripsi/exit): ").lower()
+
+    if choice == "exit":
+        print("Program keluar. Terima kasih!")
+        break
+
+    elif choice == "enkripsi":
+        plaintext = input("Masukkan plaintext: ")
+        key = input("Masukkan kunci: ")
+        
+        encrypted_text = vigenere_encrypt(plaintext, key)
+        print("\nEnkripsi Text:", encrypted_text)
+
+        continue_to_decrypt = input("Apakah Anda ingin melanjutkan ke dekripsi? (y/n): ").lower()
+        if continue_to_decrypt != "y":
+            print("Program keluar. Terima kasih!")
+            break
+
+    elif choice == "dekripsi":
+        ciphertext = input("Masukkan ciphertext: ")
+        key = input("Masukkan kunci: ")
+        
+        decrypted_text = vigenere_decrypt(ciphertext, key)
+        print("Dekripsi Text:", decrypted_text)
+
+    else:
+        print("Pilihan tidak valid. Silakan pilih 'enkripsi', 'dekripsi', atau 'exit'.")
